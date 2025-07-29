@@ -1,12 +1,8 @@
-from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
-from django.db.models import Q
-from django.core.exceptions import ValidationError
 import uuid
 from .models import Product
 from .serializers import ProductSerializer, ProductListSerializer
+from .response_handler import StandardResponse
 
 
 @api_view(['GET', 'POST'])
@@ -24,14 +20,39 @@ def product_list(request):
             products = products.filter(location__icontains=location_query)
         
         serializer = ProductListSerializer(products, many=True, context={'request': request})
-        return Response({'products': serializer.data}, status=status.HTTP_200_OK)
+        
+        # Check if products list is empty
+        if not serializer.data:
+            search_terms = []
+            if name_query:
+                search_terms.append(f"name='{name_query}'")
+            if location_query:
+                search_terms.append(f"location='{location_query}'")
+            
+            if search_terms:
+                message = f"No products found matching {' and '.join(search_terms)}"
+            else:
+                message = "No products available"
+            
+            return StandardResponse.empty_list(message=message)
+        
+        return StandardResponse.success(
+            data={'products': serializer.data},
+            message=f"Retrieved {len(serializer.data)} product(s) successfully"
+        )
     
     elif request.method == 'POST':
         serializer = ProductSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             product = serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return StandardResponse.created(
+                data=serializer.data,
+                message="Product created successfully"
+            )
+        return StandardResponse.validation_error(
+            errors=serializer.errors,
+            message="Product creation failed due to validation errors"
+        )
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -40,25 +61,37 @@ def product_detail(request, product_id):
     try:
         uuid.UUID(str(product_id))
     except (ValueError, TypeError):
-        return Response({'message': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return StandardResponse.not_found(message="Product not found")
     
     try:
         product = Product.objects.get(id=product_id, is_delete=False)
     except Product.DoesNotExist:
-        return Response({'message': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return StandardResponse.not_found(message="Product not found")
     
     if request.method == 'GET':
         serializer = ProductSerializer(product, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return StandardResponse.success(
+            data=serializer.data,
+            message="Product retrieved successfully"
+        )
     
     elif request.method == 'PUT':
         serializer = ProductSerializer(product, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return StandardResponse.success(
+                data=serializer.data,
+                message="Product updated successfully"
+            )
+        return StandardResponse.validation_error(
+            errors=serializer.errors,
+            message="Product update failed due to validation errors"
+        )
     
     elif request.method == 'DELETE':
         product.is_delete = True
         product.save()
-        return Response({'message': 'Product deleted successfully.'}, status=status.HTTP_200_OK)
+        return StandardResponse.success(
+            data={"deleted_id": str(product.id)},
+            message="Product deleted successfully"
+        )
