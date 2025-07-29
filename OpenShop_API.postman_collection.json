@@ -125,6 +125,31 @@
 					"response": []
 				},
 				{
+					"name": "Get Product Detail (Invalid UUID)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/products/invalid-uuid/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"invalid-uuid",
+								""
+							]
+						},
+						"description": "Tests 404 error handling with invalid UUID format. Should return JSON 404 response instead of HTML."
+					},
+					"response": []
+				},
+				{
 					"name": "Update Product (Success)",
 					"request": {
 						"method": "PUT",
@@ -212,6 +237,39 @@
 					"response": []
 				},
 				{
+					"name": "Update Product (Invalid UUID)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test Product\",\n    \"sku\": \"TEST123\",\n    \"description\": \"test description\",\n    \"shop\": \"test shop\",\n    \"location\": \"test location\",\n    \"price\": 100000,\n    \"discount\": 0,\n    \"category\": \"test\",\n    \"stock\": 10,\n    \"is_available\": true,\n    \"picture\": \"http://example.com/test.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/products/invalid-uuid/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"invalid-uuid",
+								""
+							]
+						},
+						"description": "Tests 404 error with invalid UUID format during update. Should return JSON 404 response."
+					},
+					"response": []
+				},
+				{
 					"name": "Delete Product (Soft Delete)",
 					"request": {
 						"method": "DELETE",
@@ -248,6 +306,31 @@
 							]
 						},
 						"description": "Tests 404 error when trying to delete a non-existent product. Should return 404 with 'Not found.' message."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product (Invalid UUID)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/products/123/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"123",
+								""
+							]
+						},
+						"description": "Tests 404 error with invalid UUID format during delete. Should return JSON 404 response."
 					},
 					"response": []
 				}

@@ -3,6 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.core.exceptions import ValidationError
+import uuid
 from .models import Product
 from .serializers import ProductSerializer, ProductListSerializer
 
@@ -34,6 +36,12 @@ def product_list(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def product_detail(request, product_id):
+    # Validate UUID format first
+    try:
+        uuid.UUID(str(product_id))
+    except (ValueError, TypeError):
+        return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
+    
     try:
         product = Product.objects.get(id=product_id, is_delete=False)
     except Product.DoesNotExist:
