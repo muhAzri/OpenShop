@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import Product
 
 
@@ -8,44 +9,55 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            'id', 'name', 'sku', 'description', 'shop', 'location',
-            'price', 'discount', 'category', 'stock', 'is_available',
-            'picture', 'is_delete', '_links'
+            "id",
+            "name",
+            "sku",
+            "description",
+            "shop",
+            "location",
+            "price",
+            "discount",
+            "category",
+            "stock",
+            "is_available",
+            "picture",
+            "is_delete",
+            "_links",
         ]
-        read_only_fields = ['id', 'is_delete', '_links']
+        read_only_fields = ["id", "is_delete", "_links"]
 
     def get__links(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if not request:
-            base_url = 'http://localhost:8000'
+            base_url = "http://localhost:8000"
         else:
             base_url = f"{request.scheme}://{request.get_host()}"
-        
+
         return [
             {
                 "rel": "self",
                 "href": f"{base_url}/products",
                 "action": "POST",
-                "types": ["application/json"]
+                "types": ["application/json"],
             },
             {
                 "rel": "self",
                 "href": f"{base_url}/products/{obj.id}/",
                 "action": "GET",
-                "types": ["application/json"]
+                "types": ["application/json"],
             },
             {
                 "rel": "self",
                 "href": f"{base_url}/products/{obj.id}/",
                 "action": "PUT",
-                "types": ["application/json"]
+                "types": ["application/json"],
             },
             {
                 "rel": "self",
                 "href": f"{base_url}/products/{obj.id}/",
                 "action": "DELETE",
-                "types": ["application/json"]
-            }
+                "types": ["application/json"],
+            },
         ]
 
     def validate_price(self, value):
@@ -80,41 +92,52 @@ class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            'id', 'name', 'sku', 'description', 'shop', 'location',
-            'price', 'discount', 'category', 'stock', 'is_available',
-            'picture', 'is_delete', '_links'
+            "id",
+            "name",
+            "sku",
+            "description",
+            "shop",
+            "location",
+            "price",
+            "discount",
+            "category",
+            "stock",
+            "is_available",
+            "picture",
+            "is_delete",
+            "_links",
         ]
 
     def get__links(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if not request:
-            base_url = 'http://localhost:8000'
+            base_url = "http://localhost:8000"
         else:
             base_url = f"{request.scheme}://{request.get_host()}"
-        
+
         return [
             {
                 "rel": "self",
                 "href": f"{base_url}/products",
                 "action": "POST",
-                "types": ["application/json"]
+                "types": ["application/json"],
             },
             {
                 "rel": "self",
                 "href": f"{base_url}/products/{obj.id}/",
                 "action": "GET",
-                "types": ["application/json"]
+                "types": ["application/json"],
             },
             {
                 "rel": "self",
                 "href": f"{base_url}/products/{obj.id}/",
                 "action": "PUT",
-                "types": ["application/json"]
+                "types": ["application/json"],
             },
             {
                 "rel": "self",
                 "href": f"{base_url}/products/{obj.id}/",
                 "action": "DELETE",
-                "types": ["application/json"]
-            }
+                "types": ["application/json"],
+            },
         ]

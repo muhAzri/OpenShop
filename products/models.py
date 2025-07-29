@@ -1,4 +1,5 @@
 import uuid
+
 from django.db import models
 
 
@@ -23,4 +24,4 @@ class Product(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]

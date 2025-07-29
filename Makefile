@@ -1,4 +1,4 @@
-.PHONY: help install shell server migrate makemigrations superuser collectstatic test clean runserver createsuperuser check
+.PHONY: help install shell server migrate makemigrations superuser collectstatic test clean runserver createsuperuser check format lint format-check
 
 help:
 	@echo "Available commands:"
@@ -12,6 +12,9 @@ help:
 	@echo "  test           - Run tests"
 	@echo "  clean          - Clean Python cache files"
 	@echo "  check          - Check for Django issues"
+	@echo "  format         - Format code with black and isort"
+	@echo "  format-check   - Check code formatting without changes"
+	@echo "  lint           - Run all linting and formatting checks"
 
 install:
 	python3 -m pipenv install
@@ -48,3 +51,20 @@ clean:
 
 check:
 	python3 -m pipenv run python manage.py check
+
+format:
+	@echo "Sorting imports with isort..."
+	python3 -m pipenv run isort .
+	@echo "Formatting code with black..."
+	python3 -m pipenv run black .
+	@echo "Code formatting completed!"
+
+format-check:
+	@echo "Checking import sorting..."
+	python3 -m pipenv run isort --check-only --diff .
+	@echo "Checking code formatting..."
+	python3 -m pipenv run black --check --diff .
+	@echo "Format check completed!"
+
+lint: format-check check
+	@echo "All linting checks passed!"

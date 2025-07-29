@@ -89,9 +89,43 @@ A RESTful API for product management built with Django REST Framework. This API 
 6. **Start development server**
    ```bash
    python manage.py runserver
+   # or using make
+   make server
    ```
 
 The API will be available at `http://localhost:8000`
+
+## Code Quality & Formatting
+
+### Code Formatting
+This project uses Black and isort for consistent code formatting:
+
+```bash
+# Format code automatically
+make format
+
+# Check formatting without changes
+make format-check
+
+# Run all linting checks
+make lint
+```
+
+### Available Make Commands
+```bash
+make help              # Show all available commands
+make install           # Install dependencies
+make server            # Start development server
+make migrate           # Apply database migrations
+make makemigrations    # Create new migrations
+make superuser         # Create admin user
+make test              # Run tests
+make format            # Format code with black and isort
+make format-check      # Check code formatting
+make lint              # Run all linting checks
+make clean             # Clean Python cache files
+make check             # Check for Django issues
+```
 
 ## Usage Examples
 
@@ -322,6 +356,8 @@ OpenShop/
 
 ### Development Dependencies
 - `requests`: For API testing scripts
+- `black`: Python code formatter
+- `isort`: Import statement organizer
 
 ## Configuration
 
