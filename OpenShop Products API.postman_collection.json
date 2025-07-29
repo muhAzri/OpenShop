@@ -446,7 +446,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"detail\": \"Not found.\"\n}"
+							"body": "{\n    \"message\": \"Not found.\"\n}"
 						}
 					]
 				},
@@ -726,7 +726,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"detail\": \"Not found.\"\n}"
+							"body": "{\n    \"message\": \"Not found.\"\n}"
 						}
 					]
 				},
@@ -895,7 +895,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"detail\": \"Not found.\"\n}"
+							"body": "{\n    \"message\": \"Not found.\"\n}"
 						}
 					]
 				}

@@ -40,12 +40,12 @@ def product_detail(request, product_id):
     try:
         uuid.UUID(str(product_id))
     except (ValueError, TypeError):
-        return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
     
     try:
         product = Product.objects.get(id=product_id, is_delete=False)
     except Product.DoesNotExist:
-        return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
     
     if request.method == 'GET':
         serializer = ProductSerializer(product, context={'request': request})
