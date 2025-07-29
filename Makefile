@@ -14,32 +14,32 @@ help:
 	@echo "  check          - Check for Django issues"
 
 install:
-	pipenv install
+	python3 -m pipenv install
 
 shell:
-	pipenv run python manage.py shell
+	python3 -m pipenv run python manage.py shell
 
 server:
-	pipenv run python manage.py runserver
+	python3 -m pipenv run python manage.py runserver
 
 runserver: server
 
 migrate:
-	pipenv run python manage.py migrate
+	python3 -m pipenv run python manage.py migrate
 
 makemigrations:
-	pipenv run python manage.py makemigrations
+	python3 -m pipenv run python manage.py makemigrations
 
 superuser:
-	pipenv run python manage.py createsuperuser
+	python3 -m pipenv run python manage.py createsuperuser
 
 createsuperuser: superuser
 
 collectstatic:
-	pipenv run python manage.py collectstatic --noinput
+	python3 -m pipenv run python manage.py collectstatic --noinput
 
 test:
-	pipenv run python manage.py test
+	python3 -m pipenv run python manage.py test
 
 clean:
 	find . -type f -name "*.pyc" -delete
@@ -47,4 +47,4 @@ clean:
 	find . -type f -name "*.pyo" -delete
 
 check:
-	pipenv run python manage.py check
+	python3 -m pipenv run python manage.py check
