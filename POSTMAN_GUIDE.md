@@ -10,7 +10,7 @@ The Postman collection includes comprehensive testing for:
 - ✅ **CREATE** - POST /products/
 - ✅ **READ** - GET /products/ and GET /products/:id/
 - ✅ **UPDATE** - PUT /products/:id/
-- ✅ **DELETE** - DELETE /products/:id/ (soft delete)
+- ✅ **DELETE** - DELETE /products/:id/ (soft delete with success message)
 
 ### 🔍 Search Functionality  
 - ✅ Search by product name
@@ -21,7 +21,7 @@ The Postman collection includes comprehensive testing for:
 ### ⚠️ Error Handling
 - ✅ Validation errors (400)
 - ✅ Not found errors (404)
-- ✅ Success status codes (200, 201, 204)
+- ✅ Success status codes (200, 201)
 
 ## 🚀 Quick Start
 
@@ -121,6 +121,13 @@ If using a different port, update the `base_url` environment variable:
 }
 ```
 
+### Delete Response (200 OK):
+```json
+{
+  "message": "Product deleted successfully."
+}
+```
+
 ### Error Response (404 Not Found):
 ```json
 {
@@ -202,7 +209,7 @@ Use this checklist to ensure all features are working:
 - [ ] ✅ PUT /products/:id/ returns 200 with updated data
 - [ ] ✅ PUT /products/:id/ returns 400 for invalid data
 - [ ] ✅ PUT /products/:id/ returns 404 for non-existent product
-- [ ] ✅ DELETE /products/:id/ returns 204 (no content)
+- [ ] ✅ DELETE /products/:id/ returns 200 with success message
 - [ ] ✅ DELETE /products/:id/ returns 404 for non-existent product
 - [ ] ✅ Soft delete: deleted products no longer accessible via GET
 - [ ] ✅ Search by name works with partial matches

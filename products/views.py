@@ -61,4 +61,4 @@ def product_detail(request, product_id):
     elif request.method == 'DELETE':
         product.is_delete = True
         product.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'message': 'Product deleted successfully.'}, status=status.HTTP_200_OK)
