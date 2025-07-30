@@ -18,8 +18,8 @@ A RESTful API for product management built with Django REST Framework. This API 
 - **Admin Interface**: Django admin panel for product management
 - **API Documentation**: Postman collection for comprehensive testing
 - **Proper HTTP Status Codes**: Correct status codes for all operations
-- **Standardized Responses**: Consistent JSON response format for easy frontend integration
-- **Frontend-Friendly**: Unified response structure with success flags and clear error handling
+- **Lightweight Responses**: Clean JSON response format optimized for frontend integration
+- **Frontend-Friendly**: Direct object responses without unnecessary wrapper structures
 
 ## API Endpoints
 
@@ -29,7 +29,7 @@ A RESTful API for product management built with Django REST Framework. This API 
 | `GET` | `/products/` | List all products | 200 |
 | `GET` | `/products/:id/` | Get product details | 200, 404 |
 | `PUT` | `/products/:id/` | Update product | 200, 400, 404 |
-| `DELETE` | `/products/:id/` | Soft delete product | 200, 404 |
+| `DELETE` | `/products/:id/` | Soft delete product | 204, 404 |
 | `GET` | `/products/?name=search` | Search by name | 200 |
 | `GET` | `/products/?location=search` | Search by location | 200 |
 
@@ -180,106 +180,98 @@ curl -X PUT http://localhost:8000/products/{product-id}/ \
 curl -X DELETE http://localhost:8000/products/{product-id}/
 ```
 
-## Standardized Response Format
+## Response Format
 
-All API responses follow a consistent structure for easy frontend integration:
+API responses follow a lightweight JSON format optimized for frontend integration:
 
+### Product List Response
 ```json
 {
-  "success": boolean,
-  "status_code": integer,
-  "message": string,
-  "data": object|array|null,
-  "errors": object|null
+  "products": [
+    {
+      "id": "uuid",
+      "name": "string",
+      "sku": "string",
+      // ... other product fields
+      "_links": []
+    }
+  ]
 }
 ```
 
-For detailed response format documentation, see [API_RESPONSE_FORMAT.md](API_RESPONSE_FORMAT.md).
+### Single Product Response
+Returns the product object directly with all fields and HATEOAS links.
+
+### Error Responses
+```json
+{
+  "detail": "Error message"
+}
+```
 
 ## Response Examples
 
-### Success Response (Product Created)
+### Product Created (201)
 ```json
 {
-  "success": true,
-  "status_code": 201,
-  "message": "Product created successfully",
-  "data": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Laptop Gaming ASUS",
-    "sku": "ASUS-001",
-    "description": "High performance gaming laptop",
-    "shop": "Tech Store", 
-    "location": "Jakarta",
-    "price": 15000000,
-    "discount": 1000000,
-    "category": "Electronics",
-    "stock": 25,
-    "is_available": true,
-    "picture": "https://example.com/laptop.jpg",
-    "is_delete": false,
-    "_links": [...]
-  },
-  "errors": null
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "Laptop Gaming ASUS",
+  "sku": "ASUS-001",
+  "description": "High performance gaming laptop",
+  "shop": "Tech Store", 
+  "location": "Jakarta",
+  "price": 15000000,
+  "discount": 1000000,
+  "category": "Electronics",
+  "stock": 25,
+  "is_available": true,
+  "picture": "https://example.com/laptop.jpg",
+  "is_delete": false,
+  "_links": [...]
 }
 ```
 
-### Products List Response
+### Products List (200)
 ```json
 {
-  "success": true,
-  "status_code": 200,
-  "message": "Retrieved 2 product(s) successfully",
-  "data": {
-    "products": [
-      {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
-        "name": "Laptop Gaming ASUS",
-        "sku": "ASUS-001",
-        // ... other product fields
-        "_links": [...]
-      }
-    ]
-  },
-  "errors": null
+  "products": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "Laptop Gaming ASUS",
+      "sku": "ASUS-001",
+      "description": "High performance gaming laptop",
+      "shop": "Tech Store",
+      "location": "Jakarta",
+      "price": 15000000,
+      "discount": 1000000,
+      "category": "Electronics",
+      "stock": 25,
+      "is_available": true,
+      "picture": "https://example.com/laptop.jpg",
+      "is_delete": false,
+      "_links": [...]
+    }
+  ]
 }
 ```
 
-### Error Response (Validation)
+### Product Not Found (404)
 ```json
 {
-  "success": false,
-  "status_code": 400,
-  "message": "Product creation failed due to validation errors",
-  "data": null,
-  "errors": {
-    "name": ["This field is required."],
-    "price": ["Price must be a positive integer."]
-  }
+  "detail": "Not found."
 }
 ```
 
-### Error Response (Not Found)
+### Validation Error (400)
 ```json
 {
-  "success": false,
-  "status_code": 404,
-  "message": "Product not found",
-  "data": null,
-  "errors": null
+  "name": ["This field is required."],
+  "price": ["Price must be a positive integer."]
 }
 ```
 
-### Empty Search Results
-```json
-{
-  "success": true,
-  "status_code": 200,
-  "message": "No products found matching name='search'",
-  "data": [],
-  "errors": null
-}
-```
+### Product Deleted (204)
+No response body - HTTP 204 No Content
 
 ## Admin Interface
 

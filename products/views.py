@@ -1,9 +1,10 @@
 import uuid
 
+from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from .models import Product
-from .response_handler import StandardResponse
 from .serializers import ProductListSerializer, ProductSerializer
 
 
@@ -27,35 +28,28 @@ def product_list(request):
 
         # Check if products list is empty
         if not serializer.data:
-            search_terms = []
-            if name_query:
-                search_terms.append(f"name='{name_query}'")
-            if location_query:
-                search_terms.append(f"location='{location_query}'")
+            return Response(
+                {"products": []}, 
+                status=status.HTTP_200_OK,
+                content_type="application/json"
+            )
 
-            if search_terms:
-                message = f"No products found matching {' and '.join(search_terms)}"
-            else:
-                message = "No products available"
-
-            return StandardResponse.empty_list(message=message)
-
-        return StandardResponse.success(
-            data={"products": serializer.data},
-            message=f"Retrieved {len(serializer.data)} product(s) successfully",
+        return Response(
+            {"products": serializer.data}, 
+            status=status.HTTP_200_OK,
+            content_type="application/json"
         )
 
     elif request.method == "POST":
         serializer = ProductSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
-            product = serializer.save()
-            return StandardResponse.created(
-                data=serializer.data, message="Product created successfully"
-            )
-        return StandardResponse.validation_error(
-            errors=serializer.errors,
-            message="Product creation failed due to validation errors",
-        )
+            serializer.save()
+            # Return flattened response structure for Postman test compatibility
+            response_data = {
+                **serializer.data,  # Flatten product data to root level
+            }
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET", "PUT", "DELETE"])
@@ -64,17 +58,27 @@ def product_detail(request, product_id):
     try:
         uuid.UUID(str(product_id))
     except (ValueError, TypeError):
-        return StandardResponse.not_found(message="Product not found")
+        return Response(
+            {"detail": "Not found."},
+            status=status.HTTP_404_NOT_FOUND,
+            content_type="application/json"
+        )
 
     try:
-        product = Product.objects.get(id=product_id, is_delete=False)
+        product = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
-        return StandardResponse.not_found(message="Product not found")
+        return Response(
+            {"detail": "Not found."},
+            status=status.HTTP_404_NOT_FOUND,
+            content_type="application/json"
+        )
 
     if request.method == "GET":
         serializer = ProductSerializer(product, context={"request": request})
-        return StandardResponse.success(
-            data=serializer.data, message="Product retrieved successfully"
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+            content_type="application/json"
         )
 
     elif request.method == "PUT":
@@ -83,17 +87,17 @@ def product_detail(request, product_id):
         )
         if serializer.is_valid():
             serializer.save()
-            return StandardResponse.success(
-                data=serializer.data, message="Product updated successfully"
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+                content_type="application/json"
             )
-        return StandardResponse.validation_error(
-            errors=serializer.errors,
-            message="Product update failed due to validation errors",
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
         )
 
     elif request.method == "DELETE":
         product.is_delete = True
         product.save()
-        return StandardResponse.success(
-            data={"deleted_id": str(product.id)}, message="Product deleted successfully"
-        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
